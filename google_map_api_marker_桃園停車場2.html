@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+
+    #map {
+      height: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+
+    html,
+    body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="map">
+  </div>
+
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script>
+    // var json = [{"areaId":"1","areaName":"桃園區","parkName":"府前地下停車場","totalSpace":344,"surplusSpace":"193","payGuide":"停車費率:30 元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園市政府管轄之停車場","address":"桃園區縣府路一號","wgsX":121.3011,"wgsY":24.9934,"parkId":"P-TY-001"},{"areaId":"1","areaName":"桃園區","parkName":"新民立體停車場","totalSpace":195,"surplusSpace":"81","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區民權路32號","wgsX":121.3093,"wgsY":24.9926,"parkId":"P-TY-003"},{"areaId":"1","areaName":"桃園區","parkName":"西門地下停車場","totalSpace":538,"surplusSpace":"68","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區四維街39號","wgsX":121.3046,"wgsY":24.9934,"parkId":"P-TY-004"},{"areaId":"1","areaName":"桃園區","parkName":"新埔停車場","totalSpace":109,"surplusSpace":"開放中","payGuide":"收費費率：20元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區新埔六街與南平路交叉口","wgsX":121.3,"wgsY":25.0182,"parkId":"P-TY-005"},{"areaId":"1","areaName":"桃園區","parkName":"藝文園區地下停車場(原綠一及綠二停車場)","totalSpace":514,"surplusSpace":"319","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園市政府管轄之停車場","address":"桃園區藝文一街與藝文二街","wgsX":121.3012,"wgsY":25.0139,"parkId":"P-TY-007"},{"areaId":"1","areaName":"桃園區","parkName":"朝陽公園停車場","totalSpace":45,"surplusSpace":"5","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區鎮撫街朝陽公園內","wgsX":121.3122,"wgsY":24.998,"parkId":"P-TY-009"},{"areaId":"1","areaName":"桃園區","parkName":"三民公園停車場","totalSpace":61,"surplusSpace":"37","payGuide":"計時收費，30元/小時。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區三元街與三民路2段交叉路口","wgsX":121.3179,"wgsY":25.0017,"parkId":"P-TY-010"},{"areaId":"1","areaName":"桃園區","parkName":"陽明公園停車場","totalSpace":64,"surplusSpace":"4","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園區長沙街與介壽路交叉口陽明公園內","wgsX":121.3091,"wgsY":24.9824,"parkId":"P-TY-011"},{"areaId":"1","areaName":"桃園區","parkName":"廈門街平面停車場","totalSpace":80,"surplusSpace":"33","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園市政府交通局管轄之停車場","address":"桃園區廈門街45號對面空地(停7用地)，桃園區中路三段189地號","wgsX":121.2988,"wgsY":24.9947,"parkId":"P-TY-012"},{"areaId":"1","areaName":"桃園區","parkName":"東門停車場","totalSpace":109,"surplusSpace":"35","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園市政府交通局管轄之停車場","address":"桃園區成功路與朝陽街交叉口","wgsX":121.3141,"wgsY":24.9932,"parkId":"P-TY-013"},{"areaId":"1","areaName":"桃園區","parkName":"桃園新站停車場","totalSpace":38,"surplusSpace":"開放中","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"台鐵桃園新站後站前","wgsX":121.3142,"wgsY":24.9877,"parkId":"P-TY-014"},{"areaId":"1","areaName":"桃園區","parkName":"大檜溪公園地下停車場","totalSpace":65,"surplusSpace":"18","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園市桃園區興一街65巷50號","wgsX":121.3167,"wgsY":25.0138,"parkId":"P-TY-015"},{"areaId":"1","areaName":"桃園區","parkName":"建國公園停車場","totalSpace":23,"surplusSpace":"5","payGuide":"收費費率：30元/小時。停車時數未滿一小時者，以一小時計算。逾一小時者，其超過之不滿一小時部分，如不逾三十分鐘者，以半小時計算；如逾三十分鐘者，仍以一小時計算收費。","introduction":"桃園區公所管轄之公有停車場","address":"桃園市桃園區建國路與建成路交叉口","wgsX":121.3155,"wgsY":24.9861,"parkId":"P-TY-016"}]
+
+
+
+    var map;
+
+    function initMap() {
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 13,
+        center: new google.maps.LatLng(24.994709, 121.311027),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+
+      });
+
+       $.ajax({
+        type: 'GET',
+        url: "http://buildschool-chu.azurewebsites.net/parking/areas",
+        dataType: 'jsonp',
+        success: function (result, status, xhr) {
+          $(result).each(function (i, item) {
+      $.ajax({
+        type: 'GET',
+        url: 'http://buildschool-chu.azurewebsites.net/parking/index',
+        dataType: 'jsonp',
+        data: {
+          'area': item
+        },
+        success: function (data) {
+          $(data).each(function (i, item) {
+            LatLng = new google.maps.LatLng(item.wgsY, item.wgsX);
+            var maker = new google.maps.Marker({
+              position: LatLng,
+              map: map,
+              title: item.parkName
+            });
+
+            
+          })
+        }
+      });
+          });
+        }
+       });
+    }
+  </script>
+  <script async defer <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkOlewKTk6LnIsMtlDGIJ_jmqztGRcZo4&callback=initMap&language=ja"></script>
+  </script>
+</body>
+
+</html>
