@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="D:/build school/HTML/codes/sweetalert-master/sweetalert-master/dist/sweetalert-dev.js"></script>
+    <link rel="stylesheet" href="D:/build school/HTML/codes/sweetalert-master/sweetalert-master/dist/sweetalert.css">
+    <title>Directions service (complex)</title>
+    <style>
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            height: 100%;
+        }
+
+        #warnings-panel {
+            width: 100%;
+            height: 10%;
+            text-align: center;
+        }
+
+        #floating-panel {
+            position: absolute;
+            top: 10px;
+            left: 40%;
+            z-index: 50;
+            background-color: #FFD2D2;
+            padding: 5px;
+            border: 1px solid #999;
+            margin-top: 30px;
+            /*邊框*/
+            text-align: center;
+            font-family: 'Roboto', 'sans-serif';
+            line-height: 30px;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="floating-panel">
+        <b>Start: </b>
+        <select id="start">
+      <option value="中華大學">中華大學</option>
+      <option value="新竹火車站">新竹火車站</option>
+      <option value="台北市立建國高級中學">建國中學</option>
+      <option value="24.718816, 121.098838">HOME</option>
+      <option value="台鐵三姓橋火車站">三姓橋火車站</option>
+    </select>
+        <b>End: </b>
+        <select id="end">
+      <option value="新竹火車站">新竹火車站</option>
+      <option value="竹東火車站">竹東火車站</option>
+      <option value="台北市立建國高級中學">建國中學</option>
+      <option value=" 24.718816, 121.098838">HOME</option>
+      <option value="東京駅">東京駅</option></select>
+        <div id="travel_selector">
+            <strong>Mode of Travel: </strong>
+            <select id="travelType" onchange="initMap();">
+        <option value="TRANSIT">Transit</option>   <!--transrortaion!!-->
+        <option value="DRIVING">Driving</option>
+        <option value="WALKING">Walking</option>
+        <option value="BICYCLING">Bicycling</option>
+    </select>
+        </div>
+    </div>
+    <div id="map"></div>
+    &nbsp;
+    <div id="warnings-panel"></div>
+    <script>
+        function initMap() {
+            var markerArray = []; //標記陣列
+
+            // Instantiate a directions service.  //實例化路線服務載入
+            // var directionsService = new google.maps.DirectionsService;
+            var directionsService = new google.maps.DirectionsService; //Directions(方向)
+            // Create a map and center it on Manhattan.  //創建地圖,其中心為台灣
+            var centermap = new google.maps.Map(document.getElementById('map'), {
+                zoom: 1,
+                center: {
+                    lat: 23.768598,
+                    lng: 120.864530
+                }
+            });
+            // Create a renderer for directions and bind it to the map. //為方向創建渲染器並將其綁定到地圖上    //DirectionsRenderer(方向渲染器)
+            var directionsDisplay = new google.maps.DirectionsRenderer({
+                map: centermap
+            });
+
+            // Instantiate an info window to hold step text.//實例化信息窗口以保持步驟文本
+            var stepDisplay = new google.maps.InfoWindow;
+
+            // Display the route between the initial start and end selections.//calculate And Display Route(計算顯示路線)
+            calculateAndDisplayRoute(
+                directionsDisplay, directionsService, markerArray, stepDisplay, map);
+            // Listen to change events from the start and end lists.  //從開始至結束的更改事件
+            var onChangeHandler = function () {
+                calculateAndDisplayRoute(
+                    directionsDisplay, directionsService, markerArray, stepDisplay, map);
+            };
+            document.getElementById('start').addEventListener('change', onChangeHandler);
+            document.getElementById('end').addEventListener('change', onChangeHandler);
+        }
+
+        function calculateAndDisplayRoute(directionsDisplay, directionsService,
+            markerArray, stepDisplay, map) {
+            // First, remove any existing markers from the map.
+            for (var i = 0; i < markerArray.length; i++) {
+                markerArray[i].setMap(null);
+            }
+            // Retrieve the start and end locations and create a DirectionsRequest using//檢索開始和結束位置並使用創建路線請求
+            // WALKING directions. 
+            var selectedMode = document.getElementById("travelType").value;
+            directionsService.route({
+                //origin: document.getElementById('start').value, //設置google關鍵字搜尋
+                 origin: '建國中學',
+                destination: document.getElementById('end').value,
+                // destination: '中華大學',
+                // travelMode: google.maps.TravelMode.WALKING
+                // travelMode: google.maps.TravelMode[selectedMode]
+                travelMode: google.maps.TravelMode[selectedMode]
+            }, function (response, status) {
+                // Route the directions and pass the response(反應/對策) to a function to create(創建)
+                // markers for each step.
+                if (status === google.maps.DirectionsStatus.OK) {
+                    document.getElementById('warnings-panel').innerHTML =
+                        '<b>' + response.routes[0].warnings + '</b>';
+                    directionsDisplay.setDirections(response);
+                    showSteps(response, markerArray, stepDisplay, map);
+                } else {
+                    swal('錯誤', 'google 無法找尋目標||無法抵達該目標：' + status, 'warning');
+                }
+            });
+        };
+
+        function showSteps(directionResult, markerArray, stepDisplay, map) {
+            // For each step, place a marker, and add the text to the marker's infowindow.對於每個步驟，放置一個標記，並將文本添加到標記的信息窗口。
+            // Also attach the marker to an array so we can keep track of it and remove it  //還要將標記附加到數組，以便我們可以跟踪它並將其刪除
+            // when calculating new routes.
+            var myRoute = directionResult.routes[0].legs[0];
+            for (var i = 0; i < myRoute.steps.length; i++) {
+                var marker = markerArray[i] = markerArray[i] || new google.maps.Marker;
+                marker.setMap(map);
+                marker.setPosition(myRoute.steps[i].start_location);
+                attachInstructionText(
+                    stepDisplay, marker, myRoute.steps[i].instructions, map);
+            }
+        }
+
+        function attachInstructionText(sitepDisplay, marker, text, map) {
+            google.maps.event.addListener(marker, 'click', function () {
+                // Open an info window when the marker is clicked on, containing the text  //點擊標記時打開一個信息窗口，包含文本
+                // of the step.
+                stepDisplay.setContent(text);
+                stepDisplay.open(map, marker);
+            });
+        };
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCkOlewKTk6LnIsMtlDGIJ_jmqztGRcZo4&callback=initMap&language=ja"></script>
+
+</body>
+
+</html>

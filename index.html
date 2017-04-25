@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>路外停車資訊 lite</title>
+  <!-- Bootstrap core CSS -->
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Custom styles for this template -->
+  <link href="stylesheets/dashboard.css" rel="stylesheet">
+</head>
+
+<body>
+
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false"
+          aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        <a class="navbar-brand" href="#">Project name</a>
+      </div>
+      <div id="navbar" class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Dashboard</a></li>
+          <li><a href="#">Settings</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Help</a></li>
+        </ul>
+        <form class="navbar-form navbar-right">
+          <input type="text" class="form-control" placeholder="Search...">
+        </form>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-sm-3 col-md-2 sidebar">
+        <ul class="nav nav-sidebar">
+          <li class="active"><a href="index.html">首頁 <span class="sr-only">(current)</span></a></li>
+          <li><a href="桃園停車場修改版.html">桃園停車場</a></li>
+          <li><a href="Route_planning.html">路線規劃</a></li>
+          <li><a href="桃園停車場_2.html">桃園停車場2</a></li>
+        </ul>
+        <ul class="nav nav-sidebar">
+          <li><a href="">Nav item</a></li>
+          <li><a href="">Nav item again</a></li>
+          <li><a href="">One more nav</a></li>
+          <li><a href="">Another nav item</a></li>
+          <li><a href="">More navigation</a></li>
+        </ul>
+        <ul class="nav nav-sidebar">
+          <li><a href="">Nav item again</a></li>
+          <li><a href="">One more nav</a></li>
+          <li><a href="">Another nav item</a></li>
+        </ul>
+      </div>
+      <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <script id="parkingLot-tmpl" type="text/x-jquery-tmpl">
+    <div class="col-xs-3 col-sm-3 col-md-3 col-lg-3 parkingLot">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">${parkName}</h3>
+        </div>
+        <div class="panel-body">
+          <p>${introduction}</p>
+          <p>${payGuide}</p>
+          <a class="address" href="https://www.google.com.tw/maps/?q=${wgsY},${wgsX}" target="_blank">${address}</a>
+        </div>
+      </div>
+    </div>
+  </script>
+
+  <script>
+    $(function () {
+      var $left = $('#areas'),
+        $right = $('#parkingLots');
+      $.ajax({
+        type: 'GET',
+        url: "http://buildschool-chu.azurewebsites.net/parking/areas",
+        dataType: 'jsonp',
+        success: function (result, status, xhr) {
+          $left.empty();
+          $right.empty();
+          $(result).each(function (i, item) {
+            $('<a></a>')
+              .attr('href', '#')
+              .text(item)
+              .addClass('btn')
+              .addClass('btn-default')
+              .data('area', item)
+              .appendTo($left)
+          });
+        }
+      });
+      $left
+        .on('click', 'a.btn', function (event) {
+          var $a = $(this),
+            areaname = $a.data('area');
+          $a.addClass("btn-primary") // 點擊的按鈕變色
+            .siblings("a.btn-primary") // 尋找到之前被點擊變色的按鈕
+            .removeClass("btn-primary"); // 恢復原狀態(不變色)
+          $right.empty();
+          $.ajax({
+            type: 'GET',
+            url: "http://buildschool-chu.azurewebsites.net/parking/index",
+            data: {
+              'area': areaname
+            },
+            dataType: 'jsonp',
+            success: function (result, status, xhr) {
+              $(result).each(function (i, item) {
+                $('#parkingLot-tmpl')
+                  .tmpl(item)
+                  .data('son', item)
+                  .appendTo($right);
+              })
+            }
+          })
+          return false;
+        })
+        $right
+        .on('click','a.address', function(){
+          var $add =$(this);
+          parkdata = $add.parents('.parkingLot'),
+          parkout = parkdata.data("son");
+           $("#parkingLotMap").remove();
+          $('#map').remove();
+alert(parkout.wgsX)
+          // 顯示地圖
+          $("<iframe></iframe>")
+            .attr("id", "parkingLotMap")
+            .attr("width", "100%")
+            .attr("height", 300)
+            .attr("frameBorder", 0)
+            .attr("src",
+              "https://www.google.com/maps/embed/v1/place?key=AIzaSyBJADoRetu48862wwZAykrCrUmO3gOGI90&q=" +
+              parkout.wgsY + "," + parkout.wgsX)
+            .prependTo($right);
+return false;
+        })
+
+    })
+  </script>
+</body>
+
+</html>
