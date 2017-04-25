@@ -12,7 +12,12 @@
   <link href="stylesheets/dashboard.css" rel="stylesheet">
   <style>
     /*CSS*/
-
+#backhome{
+  color: blue;
+}
+#menuside{
+  padding-top: 50px;
+}
     #map2 {
       width: 100%;
       height: 30em;
@@ -99,7 +104,8 @@
 
   <script>
     var map;
-    var xylog;
+    var xlog,ylog;
+
     $('#map2').hide();
     $(function () {
       var $left = $('#menuside'),
@@ -120,6 +126,7 @@
               .data('area', item)
               .appendTo($left)
           });
+          $('#menuside').append('<a  href="index.html" id="backhome" class="btn btn-default">TEST</a>')
         }
       });
       $left
@@ -127,7 +134,7 @@
           $('#map2').show(3000, function () {
             google.maps.event.trigger(map,'resize');
           });
-          $('#map').toggle(3000, function () {
+          $('#map').hide(3000, function () {
             google.maps.event.trigger(map,'resize');
           });
           initMap();
@@ -154,6 +161,9 @@
                   .addClass('btn')
                   .addClass('btn-default')
                   .appendTo($right)
+                  xlog=item.wgsX;
+                  ylog=item.wgsY;
+                  initMap(xlog,ylog);
               })
             }
           })
@@ -166,10 +176,10 @@
         return false;
       });
     })
-      function initMap(text, X, Y, zoon) {
+      function initMap(X,Y) {
         var myLatlng = {
-          lat: 24.760079,
-          lng:120.952796
+          lat: Y,
+          lng:X
            
         };
         map = new google.maps.Map(document.getElementById('map2'), {
